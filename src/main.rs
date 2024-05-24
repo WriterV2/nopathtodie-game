@@ -1,24 +1,31 @@
+use rand::seq::IteratorRandom;
 use rand::{thread_rng, Rng};
 
 #[derive(Debug)]
 struct Scenario {
     level: u32,
-    location: [u32; 2],
+    location: [i32; 2],
     story: &'static str,
     death_story: &'static str,
 }
 
-const SCENARIOS: [Scenario; 2] = [
+const SCENARIOS: [Scenario; 3] = [
     Scenario {
         level: 1,
         location: [0, 0],
-        story: "",
+        story: "A",
         death_story: "",
     },
     Scenario {
         level: 1,
-        location: [3, 1],
-        story: "",
+        location: [-1, 1],
+        story: "B",
+        death_story: "",
+    },
+    Scenario {
+        level: 1,
+        location: [1, 1],
+        story: "C",
         death_story: "",
     },
 ];
@@ -26,7 +33,7 @@ const SCENARIOS: [Scenario; 2] = [
 #[derive(Debug)]
 struct Game {
     current_level: u32,
-    current_location: [u32; 2],
+    current_location: [i32; 2],
 }
 
 impl Default for Game {
@@ -57,6 +64,23 @@ impl Default for Game {
     }
 }
 
+impl Game {
+    fn run(mut self) {
+        let mut rng = thread_rng();
+        let scenarios = SCENARIOS.iter().filter(|scenario| {
+            scenario.level == self.current_level
+                && scenario.location[0] <= self.current_location[0] + 1
+                && scenario.location[0] >= self.current_location[0] - 1
+                && scenario.location[1] <= self.current_location[1] + 1
+                && scenario.location[1] >= self.current_location[1] - 1
+        });
+        let scenario = scenarios.choose(&mut rng).expect("No more scenarios left");
+        self.current_location = scenario.location;
+        self.current_level += 1;
+        println!("{}", scenario.story);
+    }
+}
+
 fn main() {
-    println!("{:?}", Game::default());
+    Game::default().run();
 }
