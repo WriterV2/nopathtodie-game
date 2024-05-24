@@ -18,19 +18,21 @@ const SCENARIOS: [Scenario; 3] = [
     },
     Scenario {
         level: 1,
-        location: [-1, 1],
+        location: [1, 0],
         story: "B",
         death_story: "",
     },
     Scenario {
-        level: 1,
-        location: [1, 1],
+        level: 2,
+        location: [-1, 1],
         story: "C",
         death_story: "",
     },
 ];
 
 const LAZY_WORLD_GAME_ENDING: &str = "You wander around in this empty world. You've seen everything and there's nothing left for you. You die from boredom.\nTHE END";
+
+const FINAL_ENDING: &str = "Final Ending\nTHE END";
 
 #[derive(Debug)]
 struct Game {
@@ -69,6 +71,12 @@ impl Default for Game {
 impl Game {
     fn run(mut self) {
         let mut is_running = true;
+        let max_level = SCENARIOS
+            .iter()
+            .max_by(|a, b| a.level.cmp(&b.level))
+            .expect("Not able to get scenario with highest level")
+            .level;
+
         while is_running {
             let mut rng = thread_rng();
             let scenarios = SCENARIOS.iter().filter(|scenario| {
@@ -83,6 +91,10 @@ impl Game {
                 self.current_location = scenario.location;
                 self.current_level += 1;
                 println!("{}", scenario.story);
+                if self.current_level == max_level {
+                    println!("{}", FINAL_ENDING);
+                    is_running = false;
+                }
             } else {
                 print!("{}", LAZY_WORLD_GAME_ENDING);
                 is_running = false;
