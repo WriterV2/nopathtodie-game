@@ -20,6 +20,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "k_board"
+version = "1.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4fedb2be91dd22ccceb181f2ea97adef9752f004855f2e669f6aff7f7c280a6d"
+
+[[package]]
 name = "libc"
 version = "0.2.155"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -65,6 +71,7 @@ dependencies = [
 name = "untitled-ignore-game"
 version = "0.1.0"
 dependencies = [
+ "k_board",
  "rand",
 ]
 

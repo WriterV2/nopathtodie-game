@@ -1,3 +1,5 @@
+use k_board::keyboard::Keyboard;
+use k_board::keys::Keys;
 use rand::seq::IteratorRandom;
 use rand::{thread_rng, Rng};
 
@@ -6,27 +8,43 @@ struct Scenario {
     level: u32,
     location: [i32; 2],
     story: &'static str,
+    question: &'static str,
     death_story: &'static str,
+    ignore_story: &'static str,
 }
 
-const SCENARIOS: [Scenario; 3] = [
+const SCENARIOS: [Scenario; 4] = [
     Scenario {
         level: 1,
         location: [0, 0],
         story: "A",
-        death_story: "",
+        question: "?",
+        death_story: "Death",
+        ignore_story: "Ignore",
     },
     Scenario {
         level: 1,
         location: [1, 0],
+        question: "?",
         story: "B",
-        death_story: "",
+        death_story: "Death",
+        ignore_story: "Ignore",
     },
     Scenario {
         level: 2,
         location: [-1, 1],
         story: "C",
-        death_story: "",
+        question: "?",
+        death_story: "Death",
+        ignore_story: "Ignore",
+    },
+    Scenario {
+        level: 3,
+        location: [-1, 0],
+        story: "D",
+        question: "?",
+        death_story: "Death",
+        ignore_story: "Ignore",
     },
 ];
 
@@ -69,7 +87,29 @@ impl Default for Game {
 }
 
 impl Game {
+    fn get_input(&self, scenario: &Scenario) -> bool {
+        println!("[←] Yes | No [→]");
+        for key in Keyboard::new() {
+            match key {
+                Keys::Right => {
+                    print!("\x1B[2J\x1B[1;1H");
+                    println!("{}\n", scenario.ignore_story);
+                    return true;
+                }
+                Keys::Left => {
+                    print!("\x1B[2J\x1B[1;1H");
+                    println!("{}\n", scenario.death_story);
+                    println!("THE END");
+                    return false;
+                }
+                _ => {}
+            }
+        }
+        true
+    }
+
     fn run(mut self) {
+        print!("\x1B[2J\x1B[1;1H");
         let mut is_running = true;
         let max_level = SCENARIOS
             .iter()
@@ -90,7 +130,12 @@ impl Game {
             if let Some(scenario) = scenarios.choose(&mut rng) {
                 self.current_location = scenario.location;
                 self.current_level += 1;
-                println!("{}", scenario.story);
+                println!("{}\n{}\n", scenario.story, scenario.question);
+
+                if !self.get_input(scenario) {
+                    break;
+                };
+
                 if self.current_level == max_level {
                     println!("{}", FINAL_ENDING);
                     is_running = false;
