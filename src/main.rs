@@ -1,56 +1,11 @@
 use k_board::keyboard::Keyboard;
 use k_board::keys::Keys;
-use rand::seq::IteratorRandom;
+use rand::prelude::IteratorRandom;
 use rand::{thread_rng, Rng};
 
-#[derive(Debug)]
-struct Scenario {
-    level: u32,
-    location: [i32; 2],
-    story: &'static str,
-    question: &'static str,
-    death_story: &'static str,
-    ignore_story: &'static str,
-}
+use crate::scenario::{Scenario, FINAL_ENDING, LAZY_WORLD_GAME_ENDING, SCENARIOS};
 
-const SCENARIOS: [Scenario; 4] = [
-    Scenario {
-        level: 1,
-        location: [0, 0],
-        story: "A",
-        question: "?",
-        death_story: "Death",
-        ignore_story: "Ignore",
-    },
-    Scenario {
-        level: 1,
-        location: [1, 0],
-        question: "?",
-        story: "B",
-        death_story: "Death",
-        ignore_story: "Ignore",
-    },
-    Scenario {
-        level: 2,
-        location: [-1, 1],
-        story: "C",
-        question: "?",
-        death_story: "Death",
-        ignore_story: "Ignore",
-    },
-    Scenario {
-        level: 3,
-        location: [-1, 0],
-        story: "D",
-        question: "?",
-        death_story: "Death",
-        ignore_story: "Ignore",
-    },
-];
-
-const LAZY_WORLD_GAME_ENDING: &str = "You wander around in this empty world. You've seen everything and there's nothing left for you. You die from boredom.\nTHE END";
-
-const FINAL_ENDING: &str = "Final Ending\nTHE END";
+mod scenario;
 
 #[derive(Debug)]
 struct Game {
