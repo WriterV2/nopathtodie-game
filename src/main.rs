@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use k_board::keyboard::Keyboard;
 use k_board::keys::Keys;
 use rand::prelude::IteratorRandom;
@@ -63,6 +65,15 @@ impl Game {
         true
     }
 
+    fn scroll(text: &str) {
+        for c in text.chars() {
+            print!("{c}");
+            std::io::stdout().flush().expect("Not able to flush");
+            std::thread::sleep(std::time::Duration::from_millis(1));
+        }
+        println!("\n");
+    }
+
     fn run(mut self) {
         print!("\x1B[2J\x1B[1;1H");
         let mut is_running = true;
@@ -85,7 +96,8 @@ impl Game {
             if let Some(scenario) = scenarios.choose(&mut rng) {
                 self.current_location = scenario.location;
                 self.current_level += 1;
-                println!("{}\n{}\n", scenario.story, scenario.question);
+                Self::scroll(scenario.story);
+                Self::scroll(scenario.question);
 
                 if !self.get_input(scenario) {
                     break;
